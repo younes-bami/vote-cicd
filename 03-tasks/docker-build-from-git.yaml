@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: buildah-v0-8-0
+spec:
+  inputs:
+    resources:
+    - type: git
+      name: my-resource-repo
+    - type: image
+      name: my-image-resource
+    params:
+    - name: dockerfile-directory
+      description: The directory in source that contains yaml manifests
+      type: string
+      default: "docker"
+    - name: dockerfile-name
+      description: The name of the dockerfile
+      type: string
+      default: "Dockerfile"
+  steps:
+  - name: build
+    image: younesic/docker-in-docker:latest
+    workingdir: /workspace/k8s-yamls-repo
+    command: ["/bin/bash", "-c"]
+    args:
+    - |-
+      echo build dockerfile
+      docker build -t . 
+      echo -----------------------------------

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2020-04-20T16:45:16Z"
+  labels:
+    app.kubernetes.io/managed-by: EventListener
+    app.kubernetes.io/part-of: Triggers
+    eventlistener: vote-cicd-listener
+  name: el-vote-cicd-listener-1
+  namespace: vote
+spec:
+  ports:
+  - name: http-listener
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/managed-by: EventListener
+    app.kubernetes.io/part-of: Triggers
+    eventlistener: vote-cicd-listener
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}

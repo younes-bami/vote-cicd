@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: build-and-deploy
+spec:
+  resources:
+  - name: my-source-repo
+    type: git
+  - name: my-image-resource
+    type: image
+  params:
+  - name: deployment-name
+    type: string
+    description: name of the deployment to be patched
+  tasks:
+  - name: build-image
+    taskRef:
+      name: build-from-git
+#     kind: ClusterTask
+    resources:
+      inputs:
+      - name: source
+        resource: repo
+      outputs:
+      - name: image
+        resource: image
+#    params:
+#    - name: TLSVERIFY
+#      value: "false"
+  - name: create-upate-deployment
+    taskRef:
+      name: kubectl-apply-deployment
+    resources:
+      inputs:
+      - name: k8s-yamls-repo
+        resource: repo
+      - name: new-image
+        resource: image
+    params:
+    - name: deployment-name
+      value: $(params.deployment-name)
+    runAfter:
+    - build-image
